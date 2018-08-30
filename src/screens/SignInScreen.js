@@ -10,7 +10,7 @@ class SignInScreen extends Component {
     };
 
     componentDidMount() {
-        let signedIn = this.props.googleLogin();
+        let signedIn = this.props.googleLogin(this.props.navigation);
         if (signedIn) this.props.navigation.navigate('App');
     }
     

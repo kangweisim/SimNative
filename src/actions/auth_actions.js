@@ -10,7 +10,7 @@ import {
 // AsyncStorage.setItem('fb_token', token);
 // AsyncStorage.getItem('fb_token');
 
-export const googleLogin = () => async dispatch => {
+export const googleLogin = (navigation) => async dispatch => {
   let token = await AsyncStorage.getItem('google_token');
 
   if (token) {
@@ -18,23 +18,27 @@ export const googleLogin = () => async dispatch => {
     dispatch({ type: GOOGLE_LOGIN_SUCCESS, payload: token });
   } else {
     // Start up FB Login process
-    doGoogleLogin(dispatch);
+    doGoogleLogin(dispatch, navigation);
   }
 };
 
-const doGoogleLogin = async dispatch => {
-    const { type, accessToken } = await Expo.Google.logInAsync({
+const doGoogleLogin = async (dispatch, navigation) => {
+    try {
+      const { type, accessToken } = await Expo.Google.logInAsync({
         androidClientId: "",
         iosClientId: "819324643725-5arrip9a7ciucs1i3v2jniitl8cdfvsg.apps.googleusercontent.com",
         scopes: ['profile', 'email'],
       });
-
-    if (type === 'cancel') {
-        return dispatch({ type: GOOGLE_LOGIN_FAIL });
+  
+      if (type === 'cancel') {
+          return dispatch({ type: GOOGLE_LOGIN_FAIL });
+      }
+  
+      await AsyncStorage.setItem('google_token', accessToken);
+      dispatch({ type: GOOGLE_LOGIN_SUCCESS, payload: accessToken });
+  
+      return true;
+    } catch(err) {
+      navigation.navigate('Welcome');
     }
-
-    await AsyncStorage.setItem('google_token', accessToken);
-    dispatch({ type: GOOGLE_LOGIN_SUCCESS, payload: accessToken });
-
-    return true;
 };

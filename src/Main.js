@@ -12,12 +12,24 @@ import { StatusBar } from 'react-native';
 import AuthLoadingScreen from './screens/AuthLoadingScreen';
 import SignInScreen from './screens/SignInScreen';
 import HomeScreen from './screens/HomeScreen'
+import WelcomeScreen from './screens/WelcomeScreen';
+import SideMenu from './components/SideMenu';
+import LearnScreen from './screens/LearnScreen';
 
 const AuthStack = createStackNavigator({ SignIn: SignInScreen });
-const AppStack = createDrawerNavigator({ Home: HomeScreen });
+const AppStack = createDrawerNavigator({ 
+    Home: HomeScreen,
+    Learn: LearnScreen
+}, {
+    contentComponent: (props) => (
+        <SideMenu {...props} />
+    )
+});
+
 
 const MainApp = createSwitchNavigator({
     AuthLoading: AuthLoadingScreen,
+    Welcome: WelcomeScreen,
     Auth: AuthStack,
     App: AppStack
 }, {
