@@ -3,7 +3,8 @@ import { Google } from 'expo';
 
 import {
   GOOGLE_LOGIN_SUCCESS,
-  GOOGLE_LOGIN_FAIL
+  GOOGLE_LOGIN_FAIL,
+  SET_HIGHSCORE
 } from './types';
 
 // How to use AsyncStorage:

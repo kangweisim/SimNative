@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { AsyncStorage, View, Button, StatusBar, FlatList, Text, Dimensions, TouchableHighlight } from 'react-native';
+import { View, Button, StatusBar, FlatList, Text, Dimensions, TouchableHighlight } from 'react-native';
+import { Header } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { pressNumber } from '../actions'
 
@@ -35,8 +36,8 @@ class HomeScreen extends Component {
     
     renderItem({item, index}) {
         return (
-            <View style={{justifyContent: 'flex-end'}}>
-                <Text style={{fontSize: 50, color: "#FFFFFF"}}>{item.num}</Text>
+            <View style={{justifyContent: 'flex-end' }}>
+                <Text style={{fontSize: 50, color: "#ffffff"}}>{item.num}</Text>
             </View>
         )
     }
@@ -48,14 +49,17 @@ class HomeScreen extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.inputList && nextProps.currentIndex != this.props.currentIndex) this.inputList.scrollToIndex({index: this.props.input.length - 1, viewPosition: 0.4 });
+        if (this.inputList && nextProps.currentIndex === 0) {
+            this.inputList.scrollToOffset({ offset: 0, animated: false });
+        }
+        if (this.inputList && nextProps.currentIndex !== 0 && nextProps.currentIndex != this.props.currentIndex) {
+            this.inputList.scrollToIndex({ index: this.props.input.length - 1, viewPosition: 0.4 });
+        }
     }
 
     onButtonPress(button) {
-        let success = this.props.pressNumber(this.props.navigation, {number: button.text, currentIndex: this.props.currentIndex, list: this.inputList});
-        if(success) this.inputList.scrollToEnd();
-        // this.setState({input: [...this.state.input, {num: button.text}]})
-        // this.inputList.scrollToEnd();
+        let { highscore, currentIndex } = this.props;
+        let success = this.props.pressNumber(this.props.navigation, {number: button.text, currentIndex, highscore});
     }
 
     render() {
@@ -66,7 +70,7 @@ class HomeScreen extends Component {
             return {
                 width: size, 
                 height: size, 
-                backgroundColor: "#FFFFFF", 
+                backgroundColor: "#8B0000", 
                 margin: 8, 
                 justifyContent: 'center',
                 borderRadius: 5
@@ -75,9 +79,9 @@ class HomeScreen extends Component {
         let renderItems = () => {
             return buttons.map((button, index) => {
                 return (
-                    <TouchableHighlight key={button.text} onPress={() => this.onButtonPress(button)}>
+                    <TouchableHighlight underlayColor="#fff" key={button.text} onPress={() => this.onButtonPress(button)}>
                         <View style={renderButtonContainerStyle(button, size)}>
-                            <Text style={{alignSelf: "center", fontSize: 30}}>
+                            <Text style={{alignSelf: "center", fontSize: 30, color: '#fff'}}>
                                 {button.text}
                             </Text>
                         </View>
@@ -88,17 +92,22 @@ class HomeScreen extends Component {
 
         
         return (
-            <View style={{flex: 1, backgroundColor:"#B22222"}}>
-                <View >
+            <View style={{flex: 1, backgroundColor:"#FFFFFF"}}>
+                <Header 
+                    leftComponent={{ icon: 'menu', color: '#fff', onPress: this.props.navigation.toggleDrawer, underlayColor: 'rgba(255,255,255,0.5)', }}
+                    rightComponent={<Text>{this.props.highscore}</Text>}
+                    backgroundColor="#8B0000"
+                />
+                <View style={{ marginTop: 20, paddingLeft: 20, paddingRight: 20, backgroundColor: '#8B0000' }}>
                     <FlatList
                         ref={(inputList) => this.inputList = inputList}
-                        contentContainerStyle={{alignContent: "center"}}
+                        contentContainerStyle={{alignContent: "center" }}
                         showsHorizontalScrollIndicator={false}
                         horizontal
                         data={this.props.input}
                         keyExtractor={(item, index) => index + "" }
                         renderItem={this.renderItem}
-                />
+                    />
                 </View>
                 <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly', alignContent: 'flex-end'}}>
                     {renderItems()}
@@ -109,10 +118,12 @@ class HomeScreen extends Component {
     
 }
 
-const mapStateToProps = ({ game }) => {
+const mapStateToProps = (state) => {
+    let { game, auth } = state;
     return {
         input: game.input,
-        currentIndex: game.currentIndex
+        currentIndex: game.currentIndex,
+        highscore: auth.highscore
     }
 }
 
