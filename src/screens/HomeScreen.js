@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { View, Button, StatusBar, FlatList, Text, Dimensions, TouchableHighlight } from 'react-native';
+import { View, FlatList, Text, Dimensions, TouchableHighlight } from 'react-native';
+import Expo from 'expo';
 import { Header } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { pressNumber } from '../actions'
+import Highscore from '../components/Highscore';
 
 const paddingValue = 8;
 const buttons = [
@@ -25,15 +27,17 @@ class HomeScreen extends Component {
 
     constructor(props) {
         super(props);
-
-        this.state = {
-            input: [
-                {num: "3"},
-                {num: "."}
-            ]
-        }
     }
     
+    async componentWillMount() {
+        this.errorSound = new Expo.Audio.Sound();
+        try {
+            await this.errorSound.loadAsync(require('../../assets/error.mp3'));
+        } catch(err) {
+            console.log(err);
+        }
+    };
+
     renderItem({item, index}) {
         return (
             <View style={{justifyContent: 'flex-end' }}>
@@ -57,9 +61,12 @@ class HomeScreen extends Component {
         }
     }
 
-    onButtonPress(button) {
+    async onButtonPress(button) {
         let { highscore, currentIndex } = this.props;
         let success = this.props.pressNumber(this.props.navigation, {number: button.text, currentIndex, highscore});
+        if (!success) {
+            await this.errorSound.playFromPositionAsync(0);
+        }
     }
 
     render() {
@@ -70,7 +77,7 @@ class HomeScreen extends Component {
             return {
                 width: size, 
                 height: size, 
-                backgroundColor: "#8B0000", 
+                backgroundColor: "#D32F2F", 
                 margin: 8, 
                 justifyContent: 'center',
                 borderRadius: 5
@@ -90,16 +97,16 @@ class HomeScreen extends Component {
             });
         }
 
-        
         return (
             <View style={{flex: 1, backgroundColor:"#FFFFFF"}}>
                 <Header 
                     leftComponent={{ icon: 'menu', color: '#fff', onPress: this.props.navigation.toggleDrawer, underlayColor: 'rgba(255,255,255,0.5)', }}
-                    rightComponent={<Text>{this.props.highscore}</Text>}
-                    backgroundColor="#8B0000"
+                    rightComponent={<Highscore highscore={this.props.highscore} />}
+                    backgroundColor="#D32F2F"
                 />
-                <View style={{ marginTop: 20, paddingLeft: 20, paddingRight: 20, backgroundColor: '#8B0000' }}>
+                <View style={{ marginTop: 20, paddingLeft: 20, paddingRight: 20, backgroundColor: '#D32F2F' }}>
                     <FlatList
+                        onScrollToIndexFailed={()=>{}}
                         ref={(inputList) => this.inputList = inputList}
                         contentContainerStyle={{alignContent: "center" }}
                         showsHorizontalScrollIndicator={false}
