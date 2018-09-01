@@ -5,8 +5,8 @@ import {
     createDrawerNavigator
 } from 'react-navigation';
 import { Provider } from 'react-redux';
-import store from './store';
-import { ScreenOrientation } from 'expo';
+import configureStore from './store';
+import { PersistGate } from 'redux-persist/integration/react';
 import { StatusBar } from 'react-native';
 
 import AuthLoadingScreen from './screens/AuthLoadingScreen';
@@ -41,10 +41,12 @@ export default class Main extends Component {
         StatusBar.setHidden(true);
     }
     render() {
-        
+        let { store, persistor } = configureStore();
         return (
             <Provider store={store}>
-                <MainApp />
+                <PersistGate loading={null} persistor={persistor}>
+                    <MainApp />
+                </PersistGate>
             </Provider>
         );
     }

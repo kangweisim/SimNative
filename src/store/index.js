@@ -1,19 +1,29 @@
 import { createStore, compose, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { AsyncStorage } from 'react-native';
-import { persistStore, autoRehydrate } from 'redux-persist';
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 import reducers from '../reducers';
 
-const store = createStore(
-  reducers,
-  {},
-  compose(
-    applyMiddleware(thunk),
-    // autoRehydrate()
-  )
-);
 
-// persistStore(store, { storage: AsyncStorage, whitelist: ['highscore']})
+const persistConfig = {
+    key: 'root',
+    storage,
+    whitelist: ['auth'] 
+}
 
+let persistedReducer = persistReducer(persistConfig, reducers);
 
-export default store;
+export default () => {
+    const store = createStore(
+        persistedReducer,
+        {},
+        compose(
+            applyMiddleware(thunk),
+        )
+    );
+    
+    let persistor = persistStore(store);   
+
+    return { store, persistor };
+};

@@ -7,18 +7,20 @@ import { pressNumber } from '../actions'
 import Highscore from '../components/Highscore';
 
 const paddingValue = 8;
-const buttons = [
-    {text: "1", value: 1},
-    {text: "2", value: 2},
-    {text: "3", value: 3},
-    {text: "4", value: 4},
-    {text: "5", value: 5},
-    {text: "6", value: 6},
-    {text: "7", value: 7},
-    {text: "8", value: 8},
-    {text: "9", value: 9},
-    {text: "0", value: 0},
+
+const BUTTONS = [
+    {text: "1", value: 1, pressed: false},
+    {text: "2", value: 2, pressed: false},
+    {text: "3", value: 3, pressed: false},
+    {text: "4", value: 4, pressed: false},
+    {text: "5", value: 5, pressed: false},
+    {text: "6", value: 6, pressed: false},
+    {text: "7", value: 7, pressed: false},
+    {text: "8", value: 8, pressed: false},
+    {text: "9", value: 9, pressed: false},
+    {text: "0", value: 0, pressed: false},
 ]
+
 
 class HomeScreen extends Component {
     static navigationOptions = {
@@ -27,10 +29,14 @@ class HomeScreen extends Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            buttons: BUTTONS
+        }
     }
     
     async componentWillMount() {
         this.errorSound = new Expo.Audio.Sound();
+        
         try {
             await this.errorSound.loadAsync(require('../../assets/error.mp3'));
         } catch(err) {
@@ -66,7 +72,23 @@ class HomeScreen extends Component {
         let success = this.props.pressNumber(this.props.navigation, {number: button.text, currentIndex, highscore});
         if (!success) {
             await this.errorSound.playFromPositionAsync(0);
+        } else {
+            let clickSound = new Expo.Audio.Sound();
+            await clickSound.loadAsync(require('../../assets/click.mp3'));
+            clickSound.playAsync();
         }
+    }
+
+    onButtonPressIn(index) {
+        let buttons = [...this.state.buttons];
+        buttons[index] = {...buttons[index], pressed: true}
+        this.setState({ buttons });
+    }
+
+    onButtonPressOut() {
+        let buttons = [...BUTTONS];
+
+        this.setState({ buttons });
     }
 
     render() {
@@ -74,41 +96,59 @@ class HomeScreen extends Component {
         let navigate = this.props.navigation.navigate;
         
         let renderButtonContainerStyle = (button, size) => {
-            return {
+            let pressedStyle = button.pressed ? {
+                transform: [{translateY: 4}],
+                shadowOpacity: 0,
+                shadowRadius: 0
+            } : {};
+            let buttonStyle = {
                 width: size, 
-                height: size, 
+                height: 40, 
                 backgroundColor: "#D32F2F", 
                 margin: 8, 
                 justifyContent: 'center',
-                borderRadius: 5
+                borderRadius: 3,
+                shadowColor: "#D32F2F",
+                shadowOffset: { width: 0, height: 5},
+                shadowOpacity: 1,
+                shadowRadius: 0,
+                borderBottomColor: "#BD2A2A",
+                borderBottomWidth: 2,
             }
+            return [buttonStyle, pressedStyle];
         }
-        let renderItems = () => {
-            return buttons.map((button, index) => {
+        let renderKeypad = () => {
+            let buttons = this.state.buttons.map((button, index) => {
                 return (
-                    <TouchableHighlight underlayColor="#fff" key={button.text} onPress={() => this.onButtonPress(button)}>
+                    <TouchableHighlight 
+                        onPressIn={() => {this.onButtonPressIn(index)}}
+                        onPressOut={() => {this.onButtonPressOut()}}
+                        underlayColor="#fff"
+                        key={button.text} 
+                        onPress={() => this.onButtonPress(button)}>
                         <View style={renderButtonContainerStyle(button, size)}>
                             <Text style={{alignSelf: "center", fontSize: 30, color: '#fff'}}>
-                                {button.text}
+                                {button.text}{button.pressed}
                             </Text>
                         </View>
                     </TouchableHighlight>
                 )
             });
+            return buttons;
         }
 
         return (
-            <View style={{flex: 1, backgroundColor:"#FFFFFF"}}>
+            <View style={{flex: 1, backgroundColor:"#FFFFFF", justifyContent: "space-between"}}>
                 <Header 
                     leftComponent={{ icon: 'menu', color: '#fff', onPress: this.props.navigation.toggleDrawer, underlayColor: 'rgba(255,255,255,0.5)', }}
                     rightComponent={<Highscore highscore={this.props.highscore} />}
                     backgroundColor="#D32F2F"
                 />
-                <View style={{ marginTop: 20, paddingLeft: 20, paddingRight: 20, backgroundColor: '#D32F2F' }}>
+                <View style={{ flex: 1, paddingLeft: 20, paddingRight: 20, backgroundColor: '#D32F2F' }}>
                     <FlatList
                         onScrollToIndexFailed={()=>{}}
                         ref={(inputList) => this.inputList = inputList}
-                        contentContainerStyle={{alignContent: "center" }}
+                        contentContainerStyle={{alignContent: "center", alignSelf: "center" }}
                         showsHorizontalScrollIndicator={false}
                         horizontal
                         data={this.props.input}
@@ -116,13 +156,33 @@ class HomeScreen extends Component {
                         renderItem={this.renderItem}
                     />
                 </View>
-                <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly', alignContent: 'flex-end'}}>
-                    {renderItems()}
+                <View style={styles.keypadsStyle}>
+                    {renderKeypad()}
                 </View>
             </View>
         )
     }
     
+}
+
+const styles = {
+    keypadsStyle: { 
+        flexDirection: 'row', 
+        flexWrap: 'wrap', 
+        justifyContent: 'space-evenly',
+        alignContent: 'flex-end', 
+        height: 226, 
+        backgroundColor: "#FFFFFF", 
+        alignSelf: "flex-end",
+        borderTopColor: "#D7DBE0",
+        borderTopWidth: 1,
+        marginTop: 0,
+        shadowRadius: 3,
+        shadowOffset: { width: 0, height: -3},
+        shadowColor: "#BDBDBD",
+        shadowOpacity: 0.2
+
+    }
 }
 
 const mapStateToProps = (state) => {
