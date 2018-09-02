@@ -4,7 +4,7 @@ import Expo from 'expo';
 import { Header } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { pressNumber } from '../actions'
-import Highscore from '../components/Highscore';
+import Score from '../components/Score';
 
 const paddingValue = 8;
 
@@ -30,7 +30,7 @@ class HomeScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            buttons: BUTTONS
+            buttons: [...BUTTONS]
         }
     }
     
@@ -47,7 +47,7 @@ class HomeScreen extends Component {
     renderItem({item, index}) {
         return (
             <View style={{justifyContent: 'flex-end' }}>
-                <Text style={{fontSize: 50, color: "#ffffff"}}>{item.num}</Text>
+                <Text style={{fontSize: 50, color: "#ffffff", fontFamily: 'montserrat-medium' }}>{item.num}</Text>
             </View>
         )
     }
@@ -94,7 +94,39 @@ class HomeScreen extends Component {
     render() {
         let size = this._calculateItemSize();
         let navigate = this.props.navigation.navigate;
-        
+
+        return (
+            <View style={{flex: 1, backgroundColor:"#FFFFFF", justifyContent: "space-between"}}>
+                <Header 
+                    leftComponent={{ icon: 'menu', color: '#fff', onPress: this.props.navigation.toggleDrawer, underlayColor: 'rgba(255,255,255,0.5)', }}
+                    backgroundColor="#D32F2F"
+                />
+                <View style={{flex: 1, justifyContent: "space-around"}}>
+                    <Score highscore={this.props.highscore}/>
+                    <View style={{ flex: 1, paddingLeft: 20, paddingRight: 20, backgroundColor: '#D32F2F' }}>
+                        <FlatList
+                            onScrollToIndexFailed={()=>{}}
+                            ref={(inputList) => this.inputList = inputList}
+                            contentContainerStyle={{alignContent: "center", alignSelf: "center" }}
+                            showsHorizontalScrollIndicator={false}
+                            horizontal
+                            data={this.props.input}
+                            keyExtractor={(item, index) => index + "" }
+                            renderItem={this.renderItem}
+                        />
+                    </View>
+                    <View style={{ flex :1 }}>
+                        <Text>Hello</Text>
+                    </View>
+                </View>
+                <View style={styles.keypadsStyle}>
+                    {this.renderKeypad(size)}
+                </View>
+            </View>
+        )
+    }
+    
+    renderKeypad(size) {
         let renderButtonContainerStyle = (button, size) => {
             let pressedStyle = button.pressed ? {
                 transform: [{translateY: 4}],
@@ -117,52 +149,26 @@ class HomeScreen extends Component {
             }
             return [buttonStyle, pressedStyle];
         }
-        let renderKeypad = () => {
-            let buttons = this.state.buttons.map((button, index) => {
-                return (
-                    <TouchableHighlight 
-                        onPressIn={() => {this.onButtonPressIn(index)}}
-                        onPressOut={() => {this.onButtonPressOut()}}
-                        underlayColor="#fff"
-                        key={button.text} 
-                        onPress={() => this.onButtonPress(button)}>
-                        <View style={renderButtonContainerStyle(button, size)}>
-                            <Text style={{alignSelf: "center", fontSize: 30, color: '#fff'}}>
-                                {button.text}{button.pressed}
-                            </Text>
-                        </View>
-                    </TouchableHighlight>
-                )
-            });
-            return buttons;
-        }
 
-        return (
-            <View style={{flex: 1, backgroundColor:"#FFFFFF", justifyContent: "space-between"}}>
-                <Header 
-                    leftComponent={{ icon: 'menu', color: '#fff', onPress: this.props.navigation.toggleDrawer, underlayColor: 'rgba(255,255,255,0.5)', }}
-                    rightComponent={<Highscore highscore={this.props.highscore} />}
-                    backgroundColor="#D32F2F"
-                />
-                <View style={{ flex: 1, paddingLeft: 20, paddingRight: 20, backgroundColor: '#D32F2F' }}>
-                    <FlatList
-                        onScrollToIndexFailed={()=>{}}
-                        ref={(inputList) => this.inputList = inputList}
-                        contentContainerStyle={{alignContent: "center", alignSelf: "center" }}
-                        showsHorizontalScrollIndicator={false}
-                        horizontal
-                        data={this.props.input}
-                        keyExtractor={(item, index) => index + "" }
-                        renderItem={this.renderItem}
-                    />
-                </View>
-                <View style={styles.keypadsStyle}>
-                    {renderKeypad()}
-                </View>
-            </View>
-        )
+        let buttons = this.state.buttons.map((button, index) => {
+            return (
+                <TouchableHighlight 
+                    onPressIn={() => {this.onButtonPressIn(index)}}
+                    onPressOut={() => {this.onButtonPressOut()}}
+                    underlayColor="#fff"
+                    key={button.text} 
+                    onPress={() => this.onButtonPress(button)}>
+                    <View style={renderButtonContainerStyle(button, size)}>
+                        <Text style={{alignSelf: "center", fontSize: 30, color: '#fff', fontFamily: 'montserrat-medium'}}>
+                            {button.text}{button.pressed}
+                        </Text>
+                    </View>
+                </TouchableHighlight>
+            )
+        });
+        return buttons;
     }
-    
+    renderKeypad = this.renderKeypad.bind(this);
 }
 
 const styles = {

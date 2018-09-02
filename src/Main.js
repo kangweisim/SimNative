@@ -8,6 +8,7 @@ import { Provider } from 'react-redux';
 import configureStore from './store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { StatusBar } from 'react-native';
+import { Font } from 'expo';
 
 import AuthLoadingScreen from './screens/AuthLoadingScreen';
 import SignInScreen from './screens/SignInScreen';
@@ -37,11 +38,17 @@ const MainApp = createSwitchNavigator({
 })
 
 export default class Main extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { fontLoaded: true }
+    }
     componentWillMount() {
         StatusBar.setHidden(true);
     }
+
     render() {
         let { store, persistor } = configureStore();
+        persistor.purge();
         return (
             <Provider store={store}>
                 <PersistGate loading={null} persistor={persistor}>
