@@ -3,15 +3,14 @@ import {  View, Button, StatusBar, FlatList, Text } from 'react-native';
 import { Header } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { PI_LIST } from '../config/constants';
+import PiList from '../components/PiList';
 
 let piList = PI_LIST.split("").map((num) => {return {num}});
 
 class LearnScreen extends Component {
     componentDidMount() {
         if (this.inputList) {
-            setTimeout(() => {
-                this.inputList.scrollToIndex({index: this.props.highscore, viewOffset: 0, viewPosition: 0.5, animated: true });
-            }, 500)
+            
         }
     }
 
@@ -31,9 +30,20 @@ class LearnScreen extends Component {
             </View>
         )
     }
-
     renderItem = this.renderItem.bind(this);
-    
+
+    setRef(list) {
+        this.inputList = list;
+    }
+    setRef = this.setRef.bind(this);
+
+    onMount() {
+        setTimeout(() => {
+            this.inputList.scrollToIndex({index: this.props.highscore, viewOffset: 0, viewPosition: 0.5, animated: true });
+        }, 180)
+    }
+    onMount = this.onMount.bind(this);
+
     render() {
         return (
             <View style={{flex: 1, backgroundColor:"#FFFFFF"}}>
@@ -42,19 +52,15 @@ class LearnScreen extends Component {
                     backgroundColor="#D32F2F"
                 />
                 <View style={{ flex: 1, marginTop: 20, paddingLeft: 20, paddingRight: 20 }}>
-                    <FlatList
-                    ref={(inputList) => this.inputList = inputList}
-                    onScrollToIndexFailed={()=>{}}
+                    <PiList
+                    onMount={this.onMount}
+                    renderItem={this.renderItem} 
+                    setRef={this.setRef} 
+                    data={piList} 
                     decelerationRate="fast"
                     snapToAlignment="center"
                     snapToInterval={80}
-                    contentContainerStyle={{justifyContent: "center", alignContent: "center", alignSelf: "center"}}
-                    showsHorizontalScrollIndicator={false}
-                    horizontal
-                    data={piList}
-                    keyExtractor={(item, index) => index + "" }
-                    renderItem={this.renderItem}
-                    />
+                    contentContainerStyle={{justifyContent: "center", alignContent: "center", alignSelf: "center"}}/>
                 </View>
             </View>
         );

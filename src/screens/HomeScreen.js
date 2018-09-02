@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { View, FlatList, Text, Dimensions, TouchableHighlight } from 'react-native';
+import { View, Text, Dimensions, TouchableHighlight } from 'react-native';
 import Expo from 'expo';
 import { Header } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { pressNumber } from '../actions'
+import PiList from '../components/PiList';
 import Score from '../components/Score';
 
 const paddingValue = 8;
@@ -51,7 +52,12 @@ class HomeScreen extends Component {
             </View>
         )
     }
+    renderItem = this.renderItem.bind(this);
     
+    setRef(list) {
+        this.inputList = list;
+    }
+    setRef = this.setRef.bind(this);
     
     _calculateItemSize() {
         let {height, width} = Dimensions.get('window');
@@ -102,20 +108,11 @@ class HomeScreen extends Component {
                     backgroundColor="#D32F2F"
                 />
                 <View style={{flex: 1, justifyContent: "space-around"}}>
-                    <Score highscore={this.props.highscore}/>
+                    <Score score={this.props.currentIndex} highscore={this.props.highscore}/>
                     <View style={{ flex: 1, paddingLeft: 20, paddingRight: 20, backgroundColor: '#D32F2F' }}>
-                        <FlatList
-                            onScrollToIndexFailed={()=>{}}
-                            ref={(inputList) => this.inputList = inputList}
-                            contentContainerStyle={{alignContent: "center", alignSelf: "center" }}
-                            showsHorizontalScrollIndicator={false}
-                            horizontal
-                            data={this.props.input}
-                            keyExtractor={(item, index) => index + "" }
-                            renderItem={this.renderItem}
-                        />
+                        <PiList renderItem={this.renderItem} setRef={this.setRef} data={this.props.input} />
                     </View>
-                    <View style={{ flex :1 }}>
+                    <View style={{ flex :1, backgroundColor: "#D32F2F" }}>
                         <Text>Hello</Text>
                     </View>
                 </View>

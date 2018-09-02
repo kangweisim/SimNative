@@ -1,7 +1,8 @@
 
-export const GOOGLE_LOGIN_SUCCESS = 'google_login_success';
-export const GOOGLE_LOGIN_FAIL = 'google_login_fail';
-export const SET_HIGHSCORE = 'set_highscore';
+export const GOOGLE_LOGIN_SUCCESS = 'GOOGLE_LOGIN_SUCCESS';
+export const GOOGLE_LOGIN_FAIL = 'GOOGLE_LOGIN_FAIL';
+export const SET_HIGHSCORE = 'SET_HIGHSCORE';
 
-export const GAME_NUMBER_PRESSED_CORRECT = 'game_number_pressed_correct';
-export const GAME_NUMBER_PRESSED_WRONG = 'game_number_pressed_wrong';
+export const GAME_NUMBER_PRESSED_CORRECT = 'GAME_NUMBER_PRESSED_CORRECT';
+export const GAME_NUMBER_PRESSED_WRONG = 'GAME_NUMBER_PRESSED_WRONG';
+export const GAME_RESET = 'GAME_RESET';

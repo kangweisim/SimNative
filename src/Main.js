@@ -48,7 +48,7 @@ export default class Main extends Component {
 
     render() {
         let { store, persistor } = configureStore();
-        persistor.purge();
+        // persistor.purge();
         return (
             <Provider store={store}>
                 <PersistGate loading={null} persistor={persistor}>

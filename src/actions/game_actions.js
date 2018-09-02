@@ -13,7 +13,7 @@ export const pressNumber = (navigation, { number, currentIndex, highscore }) => 
         if (currentIndex + 1 > highscore) dispatch({ type: SET_HIGHSCORE, payload: currentIndex + 1 });
         return true;
     } else {
-        dispatch({ type: GAME_NUMBER_PRESSED_WRONG, payload: number });
+        dispatch({ type: GAME_NUMBER_PRESSED_WRONG });
         return false;
     }
 };
