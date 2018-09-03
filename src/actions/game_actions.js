@@ -4,6 +4,7 @@ import { PI_LIST } from '../config/constants';
 import {
     GAME_NUMBER_PRESSED_CORRECT,
     GAME_NUMBER_PRESSED_WRONG,
+    GAME_RESET,
     SET_HIGHSCORE
 } from './types';
 
@@ -16,4 +17,8 @@ export const pressNumber = (navigation, { number, currentIndex, highscore }) => 
         dispatch({ type: GAME_NUMBER_PRESSED_WRONG });
         return false;
     }
+};
+
+export const reset = () => dispatch => {
+    dispatch({ type: GAME_RESET })
 };

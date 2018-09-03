@@ -8,11 +8,6 @@ import PiList from '../components/PiList';
 let piList = PI_LIST.split("").map((num) => {return {num}});
 
 class LearnScreen extends Component {
-    componentDidMount() {
-        if (this.inputList) {
-            
-        }
-    }
 
     renderItem({item, index}) {
         let highscoreStyle = index === this.props.highscore ? { fontWeight: '900' } : {}
@@ -24,9 +19,9 @@ class LearnScreen extends Component {
             }
         }
         return (
-            <View style={{justifyContent: 'flex-end'}}>
+            <View style={{justifyContent: 'flex-end', borderBottomColor: "#D32F2F", borderBottomWidth: 2}}>
                 {renderMarker(index)}
-                <Text style={[{fontSize: 50, color: "#D32F2F", margin: 2}, highscoreStyle]}>{item.num}</Text>
+                <Text style={[{fontSize: 50, color: "#D32F2F", margin: 2, marginBottom: -6}, highscoreStyle]}>{item.num}</Text>
             </View>
         )
     }
@@ -40,7 +35,7 @@ class LearnScreen extends Component {
     onMount() {
         setTimeout(() => {
             this.inputList.scrollToIndex({index: this.props.highscore, viewOffset: 0, viewPosition: 0.5, animated: true });
-        }, 180)
+        }, 800)
     }
     onMount = this.onMount.bind(this);
 

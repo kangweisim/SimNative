@@ -13,16 +13,18 @@ class Score extends Component {
             this.springValueHighscore.setValue(0.4);
             Animated.spring(this.springValueHighscore, {
                 toValue: 1,
-                friction: 100,
-                velocity: 5,
+                stiffness: 100,
+                damping: 50,
+                mass: 1
             }).start();
         }
         if (nextProps.score > this.props.score) {
             this.springValueScore.setValue(0.4);
             Animated.spring(this.springValueScore, {
                 toValue: 1,
-                friction: 100,
-                velocity: 5,
+                stiffness: 100,
+                damping: 50,
+                mass: 1
             }).start();
         }
     }
@@ -31,9 +33,9 @@ class Score extends Component {
         return (
             <View 
             style={{
-                flex: 1, 
+                flex: 2, 
                 justifyContent: "center",
-                backgroundColor: "#D32F2F", 
+                backgroundColor: "#d74343", 
                 borderBottomColor: "#FFF", 
                 borderBottomWidth: 1,
                 shadowColor: "#0F0F0F",
@@ -41,7 +43,6 @@ class Score extends Component {
                 shadowRadius: 3,
                 zIndex: 2,
                 shadowOffset: {height: 2, width: 0 }
-                
             }}
             >
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end", marginTop: 3 }}>
@@ -70,7 +71,7 @@ class Score extends Component {
                     style={{ 
                         flex: 2,
                         justifyContent: "center",
-                        backgroundColor: "#D32F2F", 
+                        backgroundColor: "#d74343", 
                         transform: [{ scale: this.springValueScore }]}}>
                         <Text 
                         style={{

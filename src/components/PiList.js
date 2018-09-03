@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { FlatList } from 'react-native';
 
 class PiList extends Component {
+    comp
     componentDidMount() {
         if(this.props.onMount) {
             this.props.onMount();
