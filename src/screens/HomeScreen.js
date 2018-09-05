@@ -43,9 +43,10 @@ class HomeScreen extends Component {
     
     async componentWillMount() {
         this.errorSound = new Expo.Audio.Sound();
-        
+        this.restartSound = new Expo.Audio.Sound();
         try {
             await this.errorSound.loadAsync(require('../../assets/error.mp3'));
+            await this.restartSound.loadAsync(require('../../assets/pullback.mp3'));
         } catch(err) {
             console.log(err);
         }
@@ -81,6 +82,7 @@ class HomeScreen extends Component {
 
     async onButtonPress(button) {
         if (this.props.ended) {
+            await this.restartSound.playFromPositionAsync(0);
             let buttons = [...this.state.buttons];
             buttons[11] = {...buttons[11], pressed: false}
             this.setState({ buttons, messageEvent: {type:"begin", message: "HERE WE GO AGAIN"} });
@@ -111,6 +113,7 @@ class HomeScreen extends Component {
         let buttons = [...this.state.buttons];
         buttons[index] = {...buttons[index], pressed: true}
         this.setState({ buttons });
+        if (this.props.ended) return;
         let clickSound = new Expo.Audio.Sound();
         await clickSound.loadAsync(require('../../assets/click.mp3'));
         clickSound.playAsync();
